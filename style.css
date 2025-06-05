@@ -1,0 +1,84 @@
+/* Estilos base */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f4f8; /* Fundo claro */
+    color: #334155; /* Texto cinza escuro */
+}
+/* Container das etapas para transições */
+.step-container {
+    min-height: 300px; /* Garante altura consistente para transições */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+}
+/* Cartões de opção */
+.option-card {
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0; /* Borda padrão */
+    border-radius: 0.75rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #475569; /* Texto cinza médio */
+}
+.option-card:hover {
+    border-color: #a78bfa; /* Roxo-300 no hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+/* Cartão de opção selecionado */
+.option-card.selected {
+    border-color: #6366f1; /* Índigo-500 */
+    background-color: #eef2ff; /* Índigo-50 */
+    box-shadow: 0 0 0 2px #6366f1; /* Efeito de anel */
+    color: #4338ca; /* Texto índigo mais escuro */
+}
+/* Transição de fade */
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+}
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.3s ease-in;
+}
+/* Estilo para o spinner de carregamento */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #6366f1;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+/* Estilo para a frase motivacional */
+.phrase-box {
+    background-color: #e0e7ff;
+    border-left: 4px solid #6366f1;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    color: #4338ca;
+    font-weight: 500;
+}
+/* Estilo para os cartões de treino */
+.workout-card {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e2e8f0;
+}

@@ -1,0 +1,76 @@
+{
+  "frases_genericas": [
+    "Cada gota de suor é um passo em direção à sua melhor versão.",
+    "A disciplina de hoje é a força de amanhã.",
+    "Supere seus limites, um treino de cada vez.",
+    "Seu corpo pode ir aonde sua mente acreditar.",
+    "A persistência transforma o impossível em realidade.",
+    "Não espere por uma oportunidade, crie-a.",
+    "O único treino ruim é aquele que não aconteceu.",
+    "Seja mais forte do que a sua desculpa.",
+    "O sucesso é a soma de pequenos esforços repetidos diariamente.",
+    "Comece onde você está. Use o que você tem. Faça o que você pode."
+  ],
+  "treinos": {
+    "biceps": {
+      "exercicios": [
+        {
+          "nome": "Rosca Direta",
+          "series": 3,
+          "repeticoes": "10-12"
+        },
+        {
+          "nome": "Rosca Martelo",
+          "series": 3,
+          "repeticoes": "12-15"
+        }
+      ]
+    },
+    "peito": {
+      "exercicios": [
+        {
+          "nome": "Supino Reto",
+          "series": 3,
+          "repeticoes": "10-12"
+        }
+      ]
+    },
+    "costas": {
+      "exercicios": [
+        {
+          "nome": "Puxada Frontal",
+          "series": 3,
+          "repeticoes": "10-12"
+        }
+      ]
+    },
+    "pernas": {
+      "exercicios": [
+        {
+          "nome": "Agachamento Livre",
+          "series": 4,
+          "repeticoes": "8-12"
+        },
+        {
+          "nome": "Leg Press",
+          "series": 3,
+          "repeticoes": "10-15"
+        }
+      ]
+    },
+    "ombros": {
+      "exercicios": [
+        {
+          "nome": "Desenvolvimento com Halteres",
+          "series": 3,
+          "repeticoes": "8-12"
+        },
+        {
+          "nome": "Elevação Lateral",
+          "series": 3,
+          "repeticoes": "12-15"
+        }
+      ]
+    }
+  }
+}

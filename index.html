@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Treino Personalizado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos base */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Fundo claro */
+            color: #334155; /* Texto cinza escuro */
+        }
+        /* Container das etapas para transições */
+        .step-container {
+            min-height: 300px; /* Garante altura consistente para transições */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 1rem;
+        }
+        /* Cartões de opção */
+        .option-card {
+            background-color: #ffffff;
+            border: 2px solid #e2e8f0; /* Borda padrão */
+            border-radius: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: #475569; /* Texto cinza médio */
+        }
+        .option-card:hover {
+            border-color: #a78bfa; /* Roxo-300 no hover */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        /* Cartão de opção selecionado */
+        .option-card.selected {
+            border-color: #6366f1; /* Índigo-500 */
+            background-color: #eef2ff; /* Índigo-50 */
+            box-shadow: 0 0 0 2px #6366f1; /* Efeito de anel */
+            color: #4338ca; /* Texto índigo mais escuro */
+        }
+        /* Transição de fade */
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+        .fade-in {
+            opacity: 1;
+            transition: opacity 0.3s ease-in;
+        }
+        /* Estilo para o spinner de carregamento */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #6366f1;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        /* Estilo para a frase motivacional */
+        .phrase-box {
+            background-color: #e0e7ff;
+            border-left: 4px solid #6366f1;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            color: #4338ca;
+            font-weight: 500;
+        }
+        /* Estilo para os cartões de treino */
+        .workout-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full border border-gray-200">
+        <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-8">
+            Seu Plano de Treino Personalizado
+        </h1>
+
+        <div id="quizContainer" class="relative">
+            <div id="step-1" class="step-container">
+                <p class="text-xl font-semibold mb-6 text-gray-700">Quais áreas musculares você gostaria de focar?</p>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-md">
+                    <div class="option-card" data-value="peito">Peito</div>
+                    <div class="option-card" data-value="costas">Costas</div>
+                    <div class="option-card" data-value="biceps">Bíceps</div>
+                    <div class="option-card" data-value="triceps">Tríceps</div>
+                    <div class="option-card" data-value="ombros">Ombros</div>
+                    <div class="option-card" data-value="pernas">Pernas</div>
+                    <div class="option-card" data-value="gluteos">Glúteos</div>
+                    <div class="option-card" data-value="abdomen">Abdômen</div>
+                    <div class="option-card" data-value="bracos">Braços (Geral)</div>
+                </div>
+                <p class="text-sm text-gray-500 mt-4">Selecione uma ou mais opções.</p>
+            </div>
+
+            <div id="step-2" class="step-container hidden">
+                <p class="text-xl font-semibold mb-6 text-gray-700">Qual o seu nível de atividade física atual?</p>
+                <div class="flex flex-col gap-3 w-full max-w-sm">
+                    <div class="option-card" data-value="sedentario">Sedentário (pouco ou nenhum exercício)</div>
+                    <div class="option-card" data-value="leve">Leve (1-2x por semana)</div>
+                    <div class="option-card" data-value="moderado">Moderado (3-4x por semana)</div>
+                    <div class="option-card" data-value="ativo">Ativo (5+x por semana)</div>
+                </div>
+            </div>
+
+            <div id="step-3" class="step-container hidden">
+                <p class="text-xl font-semibold mb-6 text-gray-700">Qual o seu objetivo principal?</p>
+                <div class="flex flex-col gap-3 w-full max-w-sm">
+                    <div class="option-card" data-value="massa">Ganhar Massa Muscular</div>
+                    <div class="option-card" data-value="perder_peso">Perder Peso / Queimar Gordura</div>
+                    <div class="option-card" data-value="resistencia">Aumentar Resistência</div>
+                    <div class="option-card" data-value="saude_geral">Saúde e Bem-Estar Geral</div>
+                </div>
+            </div>
+
+            <div id="step-results" class="step-container hidden">
+                <p class="text-2xl font-bold mb-4 text-gray-800">Seu Plano Está Pronto!</p>
+                <div id="finalResults" class="text-left w-full max-w-md bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <p class="text-gray-700 text-center">Gerando seu plano...</p>
+                    <div class="flex justify-center mt-4">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-8">
+                <button id="backBtn"
+                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:opacity-50"
+                    disabled>
+                    Voltar
+                </button>
+                <button id="nextBtn"
+                    class="bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 flex items-center justify-center">
+                    <span id="nextButtonText">Próximo</span>
+                    <div id="nextButtonSpinner" class="spinner ml-2 hidden"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados do JSON (embutidos para simplicidade do projeto de faculdade)
+        const workoutDataFull = {
+            "frases_genericas": [
+                "Cada gota de suor é um passo em direção à sua melhor versão.",
+                "A disciplina de hoje é a força de amanhã.",
+                "Supere seus limites, um treino de cada vez.",
+                "Seu corpo pode ir aonde sua mente acreditar.",
+                "A persistência transforma o impossível em realidade.",
+                "Não espere por uma oportunidade, crie-a.",
+                "O único treino ruim é aquele que não aconteceu.",
+                "Seja mais forte do que a sua desculpa.",
+                "O sucesso é a soma de pequenos esforços repetidos diariamente.",
+                "Comece onde você está. Use o que você tem. Faça o que você pode."
+            ],
+            "treinos": {
+                "biceps": { "exercicios": [{ "nome": "Rosca Direta", "series": 3, "repeticoes": "10-12" }, { "nome": "Rosca Martelo", "series": 3, "repeticoes": "12-15" }] },
+                "peito": { "exercicios": [{ "nome": "Supino Reto", "series": 3, "repeticoes": "10-12" }, { "nome": "Crucifixo com Halteres", "series": 3, "repeticoes": "12-15" }] },
+                "costas": { "exercicios": [{ "nome": "Puxada Frontal", "series": 3, "repeticoes": "10-12" }, { "nome": "Remada Curvada", "series": 3, "repeticoes": "10-12" }] },
+                "pernas": { "exercicios": [{ "nome": "Agachamento Livre", "series": 4, "repeticoes": "8-12" }, { "nome": "Leg Press", "series": 3, "repeticoes": "10-15" }] },
+                "ombros": { "exercicios": [{ "nome": "Desenvolvimento com Halteres", "series": 3, "repeticoes": "8-12" }, { "nome": "Elevação Lateral", "series": 3, "repeticoes": "12-15" }] },
+                "triceps": { "exercicios": [{ "nome": "Extensão de Tríceps na Polia", "series": 3, "repeticoes": "10-15" }, { "nome": "Paralelas", "series": 3, "repeticoes": "falha" }] },
+                "gluteos": { "exercicios": [{ "nome": "Elevação Pélvica", "series": 4, "repeticoes": "8-12" }, { "nome": "Afundo com Halteres", "series": 3, "repeticoes": "10-12 por perna" }] },
+                "abdomen": { "exercicios": [{ "nome": "Prancha", "series": 3, "repeticoes": "30-60s" }, { "nome": "Abdominal Remador", "series": 3, "repeticoes": "15-20" }] },
+                "bracos": { "exercicios": [{ "nome": "Rosca Alternada", "series": 3, "repeticoes": "10-12" }, { "nome": "Tríceps Testa", "series": 3, "repeticoes": "10-12" }] }
+            }
+        };
+
+        // Acessa as partes específicas dos dados
+        const workoutData = workoutDataFull.treinos;
+        const motivationalPhrases = workoutDataFull.frases_genericas;
+
+        // Estado do Quiz
+        let currentStep = 1; // Começa na primeira etapa
+        const userData = {
+            focusedAreas: [],
+            activityLevel: null,
+            mainGoal: null
+        }; // Objeto para armazenar as respostas do usuário
+
+        // Mapeamento das etapas e seus elementos
+        const quizSteps = {
+            1: {
+                id: 'step-1',
+                type: 'multiselect', // Seleção múltipla
+                optionsSelector: '#step-1 .option-card',
+                dataKey: 'focusedAreas'
+            },
+            2: {
+                id: 'step-2',
+                type: 'singleselect', // Seleção única
+                optionsSelector: '#step-2 .option-card',
+                dataKey: 'activityLevel'
+            },
+            3: {
+                id: 'step-3',
+                type: 'singleselect', // Seleção única
+                optionsSelector: '#step-3 .option-card',
+                dataKey: 'mainGoal'
+            },
+            'results': {
+                id: 'step-results'
+            }
+        };
+
+        // Referências aos elementos HTML
+        const quizContainer = document.getElementById('quizContainer');
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const nextButtonText = document.getElementById('nextButtonText');
+        const nextButtonSpinner = document.getElementById('nextButtonSpinner');
+        const finalResultsDiv = document.getElementById('finalResults');
+
+        // --- Funções Auxiliares ---
+
+        // Adiciona a função capitalize ao protótipo de String para formatar nomes
+        String.prototype.capitalize = function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        };
+
+        // Função para mostrar/esconder spinner no botão "Próximo"
+        function toggleNextButtonLoading(isLoading) {
+            if (isLoading) {
+                nextButtonText.textContent = 'Aguarde...';
+                nextButtonSpinner.classList.remove('hidden');
+                nextBtn.disabled = true;
+            } else {
+                nextButtonText.textContent = 'Próximo';
+                nextButtonSpinner.classList.add('hidden');
+                nextBtn.disabled = false;
+            }
+        }
+
+        // Função para exibir uma etapa específica
+        function showStep(stepNumber) {
+            // Esconde todas as etapas primeiro
+            Object.values(quizSteps).forEach(step => {
+                const stepElement = document.getElementById(step.id);
+                if (stepElement) {
+                    stepElement.classList.add('hidden');
+                    stepElement.classList.remove('fade-in'); // Remove para resetar a animação
+                }
+            });
+
+            // Mostra a etapa atual com fade-in
+            const currentStepElement = document.getElementById(quizSteps[stepNumber].id);
+            if (currentStepElement) {
+                currentStepElement.classList.remove('hidden');
+                // Força o reflow para garantir que a animação de fade-in seja aplicada
+                void currentStepElement.offsetWidth;
+                currentStepElement.classList.add('fade-in');
+            }
+
+            // Atualiza o estado dos botões de navegação
+            backBtn.disabled = (stepNumber === 1);
+            // nextBtn.disabled = false; // Isso é gerenciado por toggleNextButtonLoading
+
+            if (stepNumber === Object.keys(quizSteps).length -1) { // Se for a penúltima etapa (antes dos resultados)
+                nextButtonText.textContent = 'Ver Meu Plano';
+            } else if (stepNumber === 'results') { // Se for a etapa de resultados
+                nextBtn.classList.add('hidden'); // Esconde o botão "Próximo"
+                backBtn.classList.add('hidden'); // Esconde o botão "Voltar"
+            } else { // Para qualquer outra etapa de quiz (1, 2, 3)
+                nextButtonText.textContent = 'Próximo';
+                nextBtn.classList.remove('hidden');
+                backBtn.classList.remove('hidden');
+            }
+
+            // Re-seleciona as opções se o usuário voltar para uma etapa já respondida
+            const stepConfigForReselect = quizSteps[stepNumber];
+            // APENAS tente re-selecionar se for uma etapa de quiz com tipo definido
+            if (stepConfigForReselect && stepConfigForReselect.type) {
+                const currentStepDataKey = stepConfigForReselect.dataKey;
+                const savedAnswers = userData[currentStepDataKey];
+                if (savedAnswers) {
+                    const options = document.querySelectorAll(stepConfigForReselect.optionsSelector);
+                    options.forEach(option => {
+                        const value = option.dataset.value;
+                        if (Array.isArray(savedAnswers) && savedAnswers.includes(value)) {
+                            option.classList.add('selected');
+                        } else if (savedAnswers === value) {
+                            option.classList.add('selected');
+                        } else {
+                            option.classList.remove('selected');
+                        }
+                    });
+                } else {
+                    // Limpa seleções se não houver dados salvos para esta etapa
+                    const options = document.querySelectorAll(stepConfigForReselect.optionsSelector);
+                    options.forEach(option => option.classList.remove('selected'));
+                }
+            } else {
+                // Se for a etapa de resultados ou uma etapa sem tipo (não é uma pergunta), limpa as seleções
+                const options = document.querySelectorAll('.option-card');
+                options.forEach(option => option.classList.remove('selected'));
+            }
+        }
+
+        // Função para coletar as respostas da etapa atual
+        function collectAnswers(stepNumber) {
+            const stepConfig = quizSteps[stepNumber];
+
+            // Adicionado: Verificação defensiva para garantir que stepConfig e suas propriedades existam
+            if (!stepConfig || !stepConfig.optionsSelector || !stepConfig.type) {
+                console.warn(`Tentativa de coletar respostas para a etapa ${stepNumber} que não é uma etapa de quiz válida ou não possui a configuração necessária.`);
+                return; // Sai da função graciosamente
+            }
+
+            const selectedOptions = document.querySelectorAll(`${stepConfig.optionsSelector}.selected`);
+
+            if (stepConfig.type === 'multiselect') {
+                userData[stepConfig.dataKey] = Array.from(selectedOptions).map(opt => opt.dataset.value);
+            } else if (stepConfig.type === 'singleselect') {
+                userData[stepConfig.dataKey] = selectedOptions.length > 0 ? selectedOptions[0].dataset.value : null;
+            }
+            // Adicionar lógica para outros tipos de input se necessário (ex: text, slider)
+        }
+
+        // Função para validar se a etapa atual foi respondida
+        function validateStep(stepNumber) {
+            const stepConfig = quizSteps[stepNumber];
+            // Adicionado: Verificação defensiva para garantir que stepConfig e suas propriedades existam
+            if (!stepConfig || !stepConfig.type || !stepConfig.dataKey) {
+                console.warn(`Tentativa de validar a etapa ${stepNumber} que não é uma etapa de quiz válida ou não possui a configuração necessária.`);
+                return false; // Considera inválido se a configuração estiver faltando
+            }
+
+            const answers = userData[stepConfig.dataKey];
+
+            if (stepConfig.type === 'multiselect') {
+                return answers && answers.length > 0;
+            } else if (stepConfig.type === 'singleselect') {
+                return answers !== null;
+            }
+            return true; // Assume outros tipos são válidos por enquanto
+        }
+
+        // Função para gerar o plano de treino final
+        async function generateFinalWorkout() {
+            toggleNextButtonLoading(true); // Mostra o spinner
+            finalResultsDiv.innerHTML = `<p class="text-gray-700 text-center">Gerando seu plano...</p><div class="flex justify-center mt-4"><div class="spinner"></div></div>`;
+
+            // Simula um atraso de processamento
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            let htmlContent = '';
+
+            // 1. Escolhe e exibe a frase genérica
+            const chosenPhrase = motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
+            htmlContent += `<div class="phrase-box mb-4 animate-fadeIn">Frase: ${chosenPhrase}</div>`;
+
+            // 2. Determina os treinos com base nas áreas focadas
+            const focusedAreas = userData.focusedAreas;
+            if (focusedAreas && focusedAreas.length > 0) {
+                htmlContent += `<h3 class="text-xl font-bold text-gray-800 mb-4">Treinos Sugeridos:</h3>`;
+                focusedAreas.forEach(area => {
+                    const workoutInfo = workoutData[area];
+                    if (workoutInfo) {
+                        let exercisesHtml = '';
+                        workoutInfo.exercicios.forEach(ex => {
+                            exercisesHtml += `<li class="text-gray-700 mb-1">
+                                                <span class="font-semibold">${ex.nome}:</span> ${ex.series} séries de ${ex.repeticoes} repetições
+                                              </li>`;
+                        });
+                        htmlContent += `
+                            <div class="workout-card mb-4 animate-fadeIn" style="animation-delay: 0.2s;">
+                                <h4 class="text-lg font-bold text-indigo-700 mb-2">${area.capitalize()}</h4>
+                                <ul class="list-disc pl-5">
+                                    ${exercisesHtml}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                });
+            } else {
+                htmlContent += `<p class="text-gray-600 text-center">Nenhuma área de foco selecionada. Aqui estão algumas sugestões gerais:</p>`;
+                // Poderia adicionar treinos gerais aqui se não houver foco específico
+                const generalWorkouts = ['peito', 'costas', 'pernas']; // Exemplo de treinos gerais
+                generalWorkouts.forEach(area => {
+                    const workoutInfo = workoutData[area];
+                    if (workoutInfo) {
+                         let exercisesHtml = '';
+                        workoutInfo.exercicios.forEach(ex => {
+                            exercisesHtml += `<li class="text-gray-700 mb-1">
+                                                <span class="font-semibold">${ex.nome}:</span> ${ex.series} séries de ${ex.repeticoes} repetições
+                                              </li>`;
+                        });
+                        htmlContent += `
+                            <div class="workout-card mb-4 animate-fadeIn" style="animation-delay: 0.2s;">
+                                <h4 class="text-lg font-bold text-indigo-700 mb-2">${area.capitalize()}</h4>
+                                <ul class="list-disc pl-5">
+                                    ${exercisesHtml}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            // 3. Adiciona um resumo das respostas do usuário (opcional)
+            htmlContent += `<h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">Seus Dados:</h3>`;
+            htmlContent += `<p class="text-gray-700">Nível de Atividade: <span class="font-semibold">${userData.activityLevel ? userData.activityLevel.capitalize() : 'Não informado'}</span></p>`;
+            htmlContent += `<p class="text-gray-700">Objetivo Principal: <span class="font-semibold">${userData.mainGoal ? userData.mainGoal.replace('_', ' ').capitalize() : 'Não informado'}</span></p`;
+
+            finalResultsDiv.innerHTML = htmlContent;
+            toggleNextButtonLoading(false); // Esconde o spinner
+        }
+
+        // --- Event Listeners ---
+
+        // Event listener para os cartões de opção (delegação para o quizContainer)
+        quizContainer.addEventListener('click', (event) => {
+            const target = event.target.closest('.option-card');
+            if (!target) return;
+
+            const currentStepConfig = quizSteps[currentStep];
+            if (!currentStepConfig) return; // Adicionado: Proteção caso currentStep seja inválido
+
+            if (currentStepConfig.type === 'multiselect') {
+                target.classList.toggle('selected');
+            } else if (currentStepConfig.type === 'singleselect') {
+                // Remove 'selected' de todas as opções na etapa atual
+                document.querySelectorAll(currentStepConfig.optionsSelector).forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // Adiciona 'selected' apenas à opção clicada
+                target.classList.add('selected');
+            }
+        });
+
+        // Event listener para o botão "Próximo"
+        nextBtn.addEventListener('click', async () => {
+            toggleNextButtonLoading(true); // Desabilita o botão imediatamente e mostra o spinner
+
+            collectAnswers(currentStep); // Coleta as respostas da etapa atual
+
+            if (!validateStep(currentStep)) {
+                toggleNextButtonLoading(false); // Reabilita o botão se a validação falhar
+                alert('Por favor, selecione uma opção para continuar!'); // Usar modal customizado em produção
+                return;
+            }
+
+            currentStep++;
+            if (currentStep <= Object.keys(quizSteps).length -1) { // Se ainda há etapas de quiz
+                showStep(currentStep);
+                toggleNextButtonLoading(false); // Reabilita o botão após mostrar a próxima etapa
+            } else { // Se for a última etapa (resultados)
+                showStep('results');
+                await generateFinalWorkout(); // Esta função gerenciará seu próprio estado de carregamento
+            }
+        });
+
+        // Event listener para o botão "Voltar"
+        backBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        // Inicializa o quiz na primeira etapa ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep(currentStep);
+        });
+    </script>
+</body>
+</html>
